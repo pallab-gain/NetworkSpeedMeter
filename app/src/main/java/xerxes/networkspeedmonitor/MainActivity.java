@@ -5,34 +5,18 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
+
+import networkmonitor.NetworkMonitorService;
 
 
 public class MainActivity extends ActionBarActivity {
-    Button btnGenerateBubble;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toast.makeText(getBaseContext(),"onCreate", Toast.LENGTH_LONG).show();
-
-        btnGenerateBubble = (Button) findViewById(R.id.btnPutFloatingBubble);
-
-        btnGenerateBubble.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, NetworkMonitorService.class);
-                startService(intent);
-
-            }
-        });
-
-
+        startService(new Intent(this,NetworkMonitorService.class));
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
