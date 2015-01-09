@@ -1,6 +1,7 @@
 package networkmonitor;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.Typeface;
@@ -16,12 +17,22 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.TextView;
 
 
-
 public class NetworkMonitorService extends Service {
     private WindowManager windowManager;
     private TextView textView;
+    private Context mContext;
+    private static long prvRcv, prvTrs;
+    private static NetworkMonitorService networkMonitorService;
     private Handler mHandler;
-    private static long prvRcv,prvTrs;
+    public static NetworkMonitorService getInstance(Context context) {
+        if (networkMonitorService == null) {
+            networkMonitorService = new NetworkMonitorService(context);
+        }
+        return networkMonitorService;
+    }
+    public static NetworkMonitorService getInstance() {
+        return networkMonitorService;
+    }
 
     //screen parameters
     final LayoutParams myParams = new LayoutParams(
@@ -31,76 +42,62 @@ public class NetworkMonitorService extends Service {
             LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT);
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        prvRcv=prvTrs=-1;
-        if(mHandler==null) {
-            mHandler = new Handler();
-        }
-        if(textView==null) {
-            textView = new TextView(this);
+    public NetworkMonitorService(Context context) {
+        prvRcv = prvTrs = -1;
+        mContext = context;
+        mHandler = new Handler();
+        if (textView == null) {
+            textView = new TextView(context);
             textView.setMinWidth(400);
             textView.setMaxWidth(400);
             textView.setTypeface(null, Typeface.BOLD);
         }
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                doit();
-            }
-        });
-        windowManager = (WindowManager)getSystemService(WINDOW_SERVICE);
+        windowManager = (WindowManager) mContext.getSystemService(WINDOW_SERVICE);
 
         myParams.gravity = Gravity.TOP | Gravity.CENTER;
-        myParams.x=0;
-        myParams.y=100;
-        windowManager.addView(textView,myParams);
+        myParams.x = 0;
+        myParams.y = 100;
+        windowManager.addView(textView, myParams);
 
-        try{
-        	textView.setOnTouchListener(onTouchListener);
-        } catch (Exception e){
+        try {
+            textView.setOnTouchListener(onTouchListener);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    private synchronized void setSpeed(String speed){
-        if(textView!=null) {
-            textView.setText(speed);
-        }
-    }
-    private void doit(){
-        mHandler.postDelayed(new Runnable() {
+
+    private synchronized void setSpeed(final String speed) {
+        mHandler.post(new Runnable() {
             @Override
             public void run() {
-                final long bytesTransmitted = TrafficStats.getTotalTxBytes();
-                final long bytesReceived    = TrafficStats.getTotalRxBytes();
-                if(prvRcv>=0&&prvTrs>=0) {
-                    setSpeed(getString(bytesTransmitted - prvTrs, bytesReceived - prvRcv));
-                }
-                prvRcv=bytesReceived;
-                prvTrs=bytesTransmitted;
-                if(mHandler!=null){
-                    mHandler.postDelayed(this,1000L);
+
+                if (textView != null) {
+                    textView.setText(speed);
                 }
             }
-        },1000L);
-    }
-    private synchronized String getString(final long trns, final long rcv){
-       return String.format("D :%4s KB/S%4sU :%4s KB/S", rcv/1024,"", trns/1024);
+        });
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if(mHandler!=null){
-            mHandler=null;
+    public void doit() {
+
+        final long bytesTransmitted = TrafficStats.getTotalTxBytes();
+        final long bytesReceived = TrafficStats.getTotalRxBytes();
+        if (prvRcv >= 0 && prvTrs >= 0) {
+            setSpeed(getString(bytesTransmitted - prvTrs, bytesReceived - prvRcv));
         }
+        prvRcv = bytesReceived;
+        prvTrs = bytesTransmitted;
+
+    }
+
+    private synchronized String getString(final long trns, final long rcv) {
+        return String.format("D :%4s KB/S%4sU :%4s KB/S", rcv / 1024, "", trns / 1024);
     }
 
     @Override
-	public IBinder onBind(Intent intent) {
-		return null;
-	}
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
 
     private final View.OnTouchListener onTouchListener = new View.OnTouchListener() {
         private int initialX;
@@ -108,15 +105,16 @@ public class NetworkMonitorService extends Service {
         private float initialTouchX;
         private float initialTouchY;
         private long touchStartTime = 0;
+
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            if(System.currentTimeMillis()-touchStartTime>ViewConfiguration.getLongPressTimeout() && initialTouchX== event.getX()){
+            if (System.currentTimeMillis() - touchStartTime > ViewConfiguration.getLongPressTimeout() && initialTouchX == event.getX()) {
                 windowManager.removeView(textView);
                 stopSelf();
                 return false;
 
             }
-            switch(event.getAction()){
+            switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     touchStartTime = System.currentTimeMillis();
                     initialX = myParams.x;

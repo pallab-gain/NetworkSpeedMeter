@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -23,8 +24,7 @@
         <service
             android:name="networkmonitor.NetworkMonitorService"
             android:enabled="true"
-            android:exported="true" >
-        </service>
+            android:exported="true" />
 
         <receiver
             android:name="bootreceiver.BootReceiver"
@@ -35,7 +35,17 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name="repeater.AlarmManagerReceiver"
+            android:enabled="true"
+            android:exported="true" >
+        </receiver>
 
+        <service
+            android:name="repeater.DealService"
+            android:enabled="true"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>
