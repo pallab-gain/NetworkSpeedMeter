@@ -42,12 +42,15 @@ public class NetworkMonitorService extends Service {
             LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT);
 
-    public NetworkMonitorService(Context context) {
+    public NetworkMonitorService(){}
+    private NetworkMonitorService(Context context) {
         prvRcv = prvTrs = -1;
         mContext = context;
         mHandler = new Handler();
+
         if (textView == null) {
-            textView = new TextView(context);
+//            textView = new TextView(context);
+            textView = new TextView(mContext);
             textView.setMinWidth(400);
             textView.setMaxWidth(400);
             textView.setTypeface(null, Typeface.BOLD);
@@ -55,8 +58,7 @@ public class NetworkMonitorService extends Service {
         windowManager = (WindowManager) mContext.getSystemService(WINDOW_SERVICE);
 
         myParams.gravity = Gravity.TOP | Gravity.CENTER;
-        myParams.x = 0;
-        myParams.y = 100;
+
         windowManager.addView(textView, myParams);
 
         try {
@@ -70,7 +72,6 @@ public class NetworkMonitorService extends Service {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-
                 if (textView != null) {
                     textView.setText(speed);
                 }
