@@ -16,12 +16,10 @@ public class AlarmManagerReceiver extends BroadcastReceiver {
         // TODO: This method is called when the BroadcastReceiver is receiving
 
         //:1
-        //3:
         if(NetworkMonitorService.getInstance()==null){
             NetworkMonitorService.getInstance(context);
         }
 
-        Intent _intentService = new Intent(context, DealService.class);
-        context.startService(_intentService);
+        NetworkMonitorService.getInstance().doit();
     }
 }

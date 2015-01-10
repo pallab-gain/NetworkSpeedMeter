@@ -67,6 +67,16 @@ public class NetworkMonitorService extends Service {
             e.printStackTrace();
         }
     }
+    public void setFontSize(final float size){
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if(textView!=null){
+                    textView.setTextSize(size);
+                }
+            }
+        });
+    }
 
     private synchronized void setSpeed(final String speed) {
         mHandler.post(new Runnable() {
@@ -79,13 +89,13 @@ public class NetworkMonitorService extends Service {
         });
     }
 
-    public void doit() {
-
+    public synchronized void doit() {
         final long bytesTransmitted = TrafficStats.getTotalTxBytes();
         final long bytesReceived = TrafficStats.getTotalRxBytes();
         if (prvRcv >= 0 && prvTrs >= 0) {
             setSpeed(getString(bytesTransmitted - prvTrs, bytesReceived - prvRcv));
         }
+
         prvRcv = bytesReceived;
         prvTrs = bytesTransmitted;
 
