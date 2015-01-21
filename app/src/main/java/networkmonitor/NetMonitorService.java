@@ -19,9 +19,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.WindowManager;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import MyUtils.Constants;
+import MyUtils.Preference;
 import screenlistnerpkg.ScreenListner;
 import xerxes.networkspeedmonitor.MainActivity;
 import xerxes.networkspeedmonitor.R;
@@ -39,6 +41,7 @@ public class NetMonitorService extends Service {
     private long total_send;
     private long prev_upload_speed;
     private long prev_download_speed;
+    private SeekBar seekBar;
 
     //screen parameters
     final WindowManager.LayoutParams myParams = new WindowManager.LayoutParams(
@@ -51,7 +54,6 @@ public class NetMonitorService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
         textView = new TextView(getApplicationContext());
         textView.setMinWidth(400);
         textView.setMaxWidth(400);
@@ -116,6 +118,8 @@ public class NetMonitorService extends Service {
             if(mHandler!=null){
                 mHandler.removeCallbacks(runnable);
             }
+        }else if(intent.getAction().equals(Constants.ACTION.UPDATE_FONT_SIZE)){
+            textView.setTextSize( Preference.getInstance(getApplicationContext()).getFont_size() );
         }
         return START_STICKY;
     }

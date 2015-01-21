@@ -21,6 +21,10 @@ public class ScreenListner extends BroadcastReceiver {
             Intent startIntent = new Intent(context, NetMonitorService.class);
             startIntent.setAction(Constants.ACTION.START_REPEAT);
             context.startService(startIntent);
+        } else if(intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)){
+            Intent startIntent = new Intent(context, NetMonitorService.class);
+            startIntent.setAction(Constants.ACTION.BOOT_RECEIVE);
+            context.startService(startIntent);
         }
     }
 }

@@ -12,6 +12,7 @@ public class Constants {
         public static String STOPFOREGROUND_ACTION = "xerxes.networkspeedmonitor.action.stopforeground";
         public static String STOP_REAP = "stop_repeat";
         public static String START_REPEAT = "start_repeat";
+        public static String UPDATE_FONT_SIZE = "on_font_size_update";
     }
 
     public interface NOTIFICATION_ID {
