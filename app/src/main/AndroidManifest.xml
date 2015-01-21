@@ -10,41 +10,31 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        android:launchMode="singleTask">
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <service
-            android:name="networkmonitor.NetworkMonitorService"
-            android:enabled="true"
-            android:exported="true" />
-
         <receiver
-            android:name="bootreceiver.BootReceiver"
+            android:name="screenlistnerpkg.ScreenListner"
+            android:enabled="true"
+            android:exported="true" >
+
+        </receiver>
+
+        <service
+            android:name="networkmonitor.NetMonitorService"
             android:enabled="true"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-        </receiver>
-
-        <receiver
-            android:name="repeater.AlarmManagerReceiver"
-            android:enabled="true"
-            android:exported="true" >
-        </receiver>
-
-        <service
-            android:name="repeater.DealService"
-            android:enabled="true"
-            android:exported="false" >
         </service>
     </application>
 

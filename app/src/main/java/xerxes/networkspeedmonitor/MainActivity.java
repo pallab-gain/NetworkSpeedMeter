@@ -1,22 +1,29 @@
 package xerxes.networkspeedmonitor;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import repeater.AlarmManagerHandler;
+import MyUtils.Constants;
+import networkmonitor.NetMonitorService;
 
 
 public class MainActivity extends ActionBarActivity {
-    private AlarmManagerHandler alarmManagerHandler;
+
 //    private SeekBar seekBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        alarmManagerHandler = AlarmManagerHandler.getInstance(getApplicationContext());
-        MainActivity.this.finish();
+//        AlarmManagerHandler.getInstance(getApplicationContext()).startAlarm();
+     /*   Intent intent = new Intent(this, NetMonitorService.class);
+        startService(intent);*/
+        Intent startIntent = new Intent(MainActivity.this, NetMonitorService.class);
+        startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+        startService(startIntent);
+
     }
 
     @Override
